@@ -1,12 +1,12 @@
 from airflow import DAG
-import logging as log
+import logging
 import pendulum
 from airflow.operators.python import PythonOperator
-from airflow.operators.dummy import DummyOperator
 from airflow.models import Variable
 from airflow.models import TaskInstance
 import requests
 import pandas as pd
+from google.cloud import storage
 
 def get_auth_header():
     my_bearer_token = Variable.get("TWITTER_BEARER_TOKEN", deserialize_json=True)
@@ -24,6 +24,10 @@ def get_twitter_api(ti: TaskInstance, **kwargs):
 def transform_twitter_api_data_func(ti: TaskInstance, **kwargs):
     user_requests = pd.DataFrame(data=ti.xcom_pull(key="user_requests", task_ids="get_twitter_api_data_task"))
     tweet_requests = pd.DataFrame(data=ti.xcom_pull(key="tweet_requests", task_ids="get_twitter_api_data_task"))
+    client = storage.Client()
+    bucket = client.get_bucket("c-r-apache-airflow-cs280")
+    bucket.blob("data/user_requests.csv").upload_from_string(user_requests.to_csv(index=False), "text/csv")
+    bucket.blob("data/tweet_requests.csv").upload_from_string(tweet_requests.to_csv(index=False), "text/csv")
 
 
 with DAG(
