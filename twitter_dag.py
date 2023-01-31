@@ -68,6 +68,8 @@ def upload_databox():
         data = [row for row in reader]
         logging.info(header)
         logging.info(data)
+        for val in data:
+            logging.info(val)
     # with fs.open('gs://c-r-apache-airflow-cs280/data/tweet_requests.csv', 'r') as f:
     #     reader = csv.reader(f)
     #     header = next(reader)
