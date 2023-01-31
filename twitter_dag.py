@@ -3,12 +3,23 @@ import logging as log
 import pendulum
 from airflow.operators.python import PythonOperator
 from airflow.operators.dummy import DummyOperator
+from airflow.models import Variable
+from airflow.models import TaskInstance
+import requests
 
-# def first_task_function():
-#     log.info("Second Dag")
-#     name = "Enter dag \# here"
-#     log.info(f"Dag \#{dag}")
-#     return
+def get_auth_header():
+    my_bearer_token = Variable.get("TWITTER_BEARER_TOKEN", deserialize_json=True)
+    return {"Authorization": f"Bearer {my_bearer_token}"}
+
+def get_twitter_api():
+    user_ids = Variable.get("TWITTER_USER_IDS", deserialize_json=True)
+    tweet_ids = Variable.get("TWITTER_TWEET_IDS", deserialize_json=True)
+    user_requests = [requests.get(f"https://api.twitter.com/2/users/{id}?user.fields=public_metrics,profile_image_url,username,id,description", headers=get_auth_header()) for id in user_ids]
+    tweet_requests = [requests.get(f"https://api.twitter.com/2/tweets/{id}?tweet.fields=author_id,text,public_metrics", headers=get_auth_header()) for id in tweet_ids]
+    ti.xcom_push("user_requests", user_requests)
+    ti.xcom_push("tweet_requests", tweet_requests)
+    logging.info(user_requests,tweet_requests)
+
 
 with DAG(
     dag_id="project_lab_1_etl",
@@ -16,12 +27,10 @@ with DAG(
     start_date=pendulum.datetime(2023, 1, 1, tz="US/Pacific"),
     catchup=False,
 ) as dag:
-    start_task = DummyOperator(task_id="start_task")
-    # first_task = PythonOperator(task_id="first_task", python_callable=first_task_function)
-    # middleware1_task = PythonOperator(task_id="middlware1_task", python_callable=middleware1_task_function)
-    # middleware2_task = PythonOperator(task_id="middleware2_task", python_callable=middleware2_task_function)
-    # last_task = PythonOperator(task_id="last_task", python_callable=last_task_function)
-    end_task = DummyOperator(task_id="end_task")
+    get_twitter_api_data_task = PythonOperator(
+        task_id="get_twitter_api_data_task", 
+        python_callable=get_twitter_api,
+        provide_context=True
+    )
 
-# start_task >> first_task >> [middleware1_task, middleware2_task] >> last_task >> end_task
-start_task >> end_task
+get_twitter_api_data_task
