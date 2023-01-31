@@ -60,21 +60,22 @@ def transform_twitter_api_data_func(ti: TaskInstance, **kwargs):
 def upload_databox():
     user_token = Variable.get("DATABOX_TOKEN")
     dbox = Client(user_token)
-    dbox.push('testing', 3)
     
     fs = GCSFileSystem(project="Chance-Robinson-CS-280")
     with fs.open('gs://c-r-apache-airflow-cs280/data/user_requests.csv', 'r') as f:
         reader = csv.reader(f)
         header = next(reader)
         data = [row for row in reader]
-        for idx,row in data:
-            dbox.push(f'user_metric-{header[idx]}', {'timestamp': row[1], 'value': row[0]})
+        logging.info(header)
+        logging.info(data)
+        # for idx,row in data:
+        #     dbox.push(f'user_metric-{header[idx]}', {'timestamp': row[1], 'value': row[0]})
     with fs.open('gs://c-r-apache-airflow-cs280/data/tweet_requests.csv', 'r') as f:
         reader = csv.reader(f)
         header = next(reader)
         data = [row for row in reader]
-        for idx,row in data:
-            dbox.push(f'tweet_metric-{header[idx]}', {'timestamp': row[1], 'value': row[0]})
+        # for idx,row in data:
+        #     dbox.push(f'tweet_metric-{header[idx]}', {'timestamp': row[1], 'value': row[0]})
 
 with DAG(
     dag_id="project_lab_1_etl",
