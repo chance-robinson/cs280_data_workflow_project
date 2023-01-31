@@ -66,22 +66,24 @@ def upload_databox():
         reader = csv.reader(f)
         header = next(reader)
         data = [row for row in reader]
-        logging.info(header)
-        logging.info(data)
         test_list = ['followers_count','following_count','listed_count','tweet_count']
         for val in data:
-            logging.info(val)
             for idx, item in enumerate(val):
                 count = test_list.count(header[idx])
                 name_index = header.index('name')
                 if count > 0:
                     dbox.push(f'UserMetric {val[name_index]} {header[idx]}', item)
-    # with fs.open('gs://c-r-apache-airflow-cs280/data/tweet_requests.csv', 'r') as f:
-    #     reader = csv.reader(f)
-    #     header = next(reader)
-    #     data = [row for row in reader]
-        # for idx,row in data:
-        #     dbox.push(f'tweet_metric-{header[idx]}', {'timestamp': row[1], 'value': row[0]})
+    with fs.open('gs://c-r-apache-airflow-cs280/data/tweet_requests.csv', 'r') as f:
+        reader = csv.reader(f)
+        header = next(reader)
+        data = [row for row in reader]
+        test_list = ['reply_count','like_count','impression_count','retweet_count']
+        for val in data:
+            for idx, item in enumerate(val):
+                count = test_list.count(header[idx])
+                name_index = header.index('name')
+                if count > 0:
+                    dbox.push(f'TweetMetric {val[name_index]} {header[idx]}', item)
 
 with DAG(
     dag_id="project_lab_1_etl",
