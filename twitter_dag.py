@@ -45,8 +45,8 @@ def transform_twitter_api_data_func(ti: TaskInstance, **kwargs):
     client = storage.Client()
     bucket = client.get_bucket("c-r-apache-airflow-cs280")
     
-    users = pd.DataFrame(data=ti.xcom_pull(key="user_requests", task_ids="get_twitter_api_data_task"))
-    tweets = pd.DataFrame(data=ti.xcom_pull(key="tweet_requests", task_ids="get_twitter_api_data_task"))
+    users = data=ti.xcom_pull(key="user_requests", task_ids="get_twitter_api_data_task")
+    tweets = data=ti.xcom_pull(key="tweet_requests", task_ids="get_twitter_api_data_task")
     tweet_header_list = ['retweet_count', 'reply_count', 'like_count', 'quote_count', 'impression_count', 'tweet_id', 'text', 'id']
     user_header_list = ['followers_count','following_count','tweet_count','listed_count','name','username','id']
     logging.info(users)
