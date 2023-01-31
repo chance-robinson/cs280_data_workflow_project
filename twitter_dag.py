@@ -8,20 +8,18 @@ import requests
 import pandas as pd
 from google.cloud import storage
 
-def get_auth_header():
-    my_bearer_token = Variable.get("TWITTER_BEARER_TOKEN", deserialize_json=True)
-    logging.info(my_bearer_token)
-    return {"Authorization": f"Bearer {my_bearer_token}"}
-
 def get_twitter_api(ti: TaskInstance, **kwargs):
     user_ids = Variable.get("TWITTER_USER_IDS", deserialize_json=True)
     tweet_ids = Variable.get("TWITTER_TWEET_IDS", deserialize_json=True)
+    my_bearer_token = Variable.get("TWITTER_BEARER_TOKEN", deserialize_json=True)
+    header_token = {"Authorization": f"Bearer {my_bearer_token}"}
     logging.info("Check id's")
     logging.info(user_ids)
     logging.info(tweet_ids)
+    loggin.info(header_token)
     logging.info("End id's")
-    user_requests = [requests.get(f"https://api.twitter.com/2/users/{id}?user.fields=public_metrics,profile_image_url,username,id,description", headers=get_auth_header()).json() for id in user_ids]
-    tweet_requests = [requests.get(f"https://api.twitter.com/2/tweets/{id}?tweet.fields=author_id,text,public_metrics", headers=get_auth_header()).json() for id in tweet_ids]
+    user_requests = [requests.get(f"https://api.twitter.com/2/users/{id}?user.fields=public_metrics,profile_image_url,username,id,description", headers=header_token).json() for id in user_ids]
+    tweet_requests = [requests.get(f"https://api.twitter.com/2/tweets/{id}?tweet.fields=author_id,text,public_metrics", headers=header_token).json() for id in tweet_ids]
     logging.info("Check requests")
     logging.info(user_requests)
     logging.info(tweet_requests)
