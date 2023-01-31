@@ -70,6 +70,8 @@ def upload_databox():
         logging.info(data)
         for val in data:
             logging.info(val)
+            for idx, item in enumerate(val):
+                print(idx,item)
     # with fs.open('gs://c-r-apache-airflow-cs280/data/tweet_requests.csv', 'r') as f:
     #     reader = csv.reader(f)
     #     header = next(reader)
