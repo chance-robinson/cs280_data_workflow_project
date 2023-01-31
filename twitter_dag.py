@@ -11,7 +11,9 @@ from google.cloud import storage
 def get_twitter_api(ti: TaskInstance, **kwargs):
     user_ids = Variable.get("TWITTER_USER_IDS", deserialize_json=True)
     tweet_ids = Variable.get("TWITTER_TWEET_IDS", deserialize_json=True)
-    my_bearer_token = Variable.get("TWITTER_BEARER_TOKEN", deserialize_json=True)
+    # my_bearer_token = Variable.get("TWITTER_BEARER_TOKEN", deserialize_json=True)
+    my_bearer_token = "AAAAAAAAAAAAAAAAAAAAAHrdlQEAAAAAu2vIvvakLLbGqgsBXAcjwyK6XQo%3Db3PuxzKm28q0lZQUZ6N55qocL7t2YQ4no6FEET9nfURgIb2YkC"
+    header_token = {"Authorization": f"Bearer {my_bearer_token}"}
     header_token = {"Authorization": f"Bearer {my_bearer_token}"}
     logging.info("Check id's")
     logging.info(user_ids)
