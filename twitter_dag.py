@@ -57,7 +57,7 @@ def transform_twitter_api_data_func(ti: TaskInstance, **kwargs):
     bucket.blob("data/user_requests.csv").upload_from_string(user_matching_data.to_csv(index=False), "text/csv")
     bucket.blob("data/tweet_requests.csv").upload_from_string(tweet_matching_data.to_csv(index=False), "text/csv")
 
-def upload_databox():
+def upload_databox(**kwargs):
     user_token = Variable.get("DATABOX_TOKEN")
     dbox = Client(user_token)
     
@@ -71,10 +71,10 @@ def upload_databox():
         for idx,row in data:
             logging.info(row)
             dbox.push(f'user_{idx}-{header[idx]}', row[idx])
-    with fs.open('gs://c-r-apache-airflow-cs280/data/tweet_requests.csv', 'r') as f:
-        reader = csv.reader(f)
-        header = next(reader)
-        data = [row for row in reader]
+    # with fs.open('gs://c-r-apache-airflow-cs280/data/tweet_requests.csv', 'r') as f:
+    #     reader = csv.reader(f)
+    #     header = next(reader)
+    #     data = [row for row in reader]
         # for idx,row in data:
         #     dbox.push(f'tweet_metric-{header[idx]}', {'timestamp': row[1], 'value': row[0]})
 
