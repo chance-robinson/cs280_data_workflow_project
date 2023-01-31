@@ -73,7 +73,8 @@ def upload_databox():
             logging.info(val)
             for idx, item in enumerate(val):
                 logging.info(f'{idx}: {item}')
-                dbox.push(f'UserMetric: {val[name_index]}:{header[idx]}', item)
+                if type(item) == int or type(item) == float:
+                    dbox.push(f'UserMetric {val[name_index]} {header[idx]}', item)
     # with fs.open('gs://c-r-apache-airflow-cs280/data/tweet_requests.csv', 'r') as f:
     #     reader = csv.reader(f)
     #     header = next(reader)
