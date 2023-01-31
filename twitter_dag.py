@@ -10,6 +10,7 @@ from google.cloud import storage
 from gcsfs import GCSFileSystem
 import json
 from databox import Client
+import csv
 
 def flatten_json(data_dict, matching_data, keys_to_match):
     for key, value in data_dict.items():
@@ -58,18 +59,31 @@ def transform_twitter_api_data_func(ti: TaskInstance, **kwargs):
 
 def upload_databox():
     user_token = Variable.get("DATABOX_TOKEN")
-    logging.info(user_token)
     dbox = Client(user_token)
     
     fs = GCSFileSystem(project="Chance-Robinson-CS-280")
     with fs.open('gs://c-r-apache-airflow-cs280/data/user_requests.csv', 'rb') as f:
-        my_df = pd.read_csv(f)
-        logging.info(my_df.head())
-        dbox.push("twitter_user_dag", my_df)
-        logging.info("here?")
+        reader = csv.reader(f)
+        header = next(reader)
+        data = [row for row in reader]
+        payload = []
+        for row in data:
+            payload.append({
+                'timestamp': row[1],
+                'value': row[0]
+            })
+        dbox.bulk_push('user_metrics', payload)
     with fs.open('gs://c-r-apache-airflow-cs280/data/tweet_requests.csv', 'rb') as f:
-        my_df = pd.read_csv(f)
-        dbox.push("twitter_tweet_dag", my_df)
+        reader = csv.reader(f)
+        header = next(reader)
+        data = [row for row in reader]
+        payload = []
+        for row in data:
+            payload.append({
+                'timestamp': row[1],
+                'value': row[0]
+            })
+        dbox.bulk_push('tweet_metrics', payload)
 
 with DAG(
     dag_id="project_lab_1_etl",
