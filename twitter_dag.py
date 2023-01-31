@@ -81,7 +81,7 @@ def upload_databox():
         for val in data:
             for idx, item in enumerate(val):
                 count = test_list.count(header[idx])
-                tweet_index = header.index('tweet_id')
+                tweet_index = header.index('id')
                 if count > 0:
                     dbox.push(f'TweetMetric {val[tweet_index]} {header[idx]}', item)
 
