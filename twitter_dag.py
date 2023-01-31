@@ -36,8 +36,8 @@ def get_twitter_api(ti: TaskInstance, **kwargs):
     header_token = {"Authorization": f"Bearer {my_bearer_token}"}
     user_requests = [requests.get(f"https://api.twitter.com/2/users/{id}?user.fields=public_metrics,profile_image_url,username,id,description", headers=header_token).json() for id in user_ids]
     tweet_requests = [requests.get(f"https://api.twitter.com/2/tweets/{id}?tweet.fields=author_id,text,public_metrics", headers=header_token).json() for id in tweet_ids]
-    ti.xcom_push("user_requests", user_requests)
-    ti.xcom_push("tweet_requests", tweet_requests)
+    ti.xcom_push("user_requests", json.dumps(user_requests))
+    ti.xcom_push("tweet_requests", json.dumps(tweet_requests))
     logging.info(user_requests)
     logging.info(tweet_requests)
 
