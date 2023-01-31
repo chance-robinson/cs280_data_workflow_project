@@ -62,7 +62,7 @@ def upload_databox():
     dbox = Client(user_token)
     
     fs = GCSFileSystem(project="Chance-Robinson-CS-280")
-    with fs.open('gs://c-r-apache-airflow-cs280/data/user_requests.csv', 'rb') as f:
+    with fs.open('gs://c-r-apache-airflow-cs280/data/user_requests.csv', 'r') as f:
         reader = csv.reader(f)
         header = next(reader)
         data = [row for row in reader]
@@ -73,7 +73,7 @@ def upload_databox():
                 'value': row[0]
             })
         dbox.bulk_push('user_metrics', payload)
-    with fs.open('gs://c-r-apache-airflow-cs280/data/tweet_requests.csv', 'rb') as f:
+    with fs.open('gs://c-r-apache-airflow-cs280/data/tweet_requests.csv', 'r') as f:
         reader = csv.reader(f)
         header = next(reader)
         data = [row for row in reader]
