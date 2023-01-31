@@ -42,26 +42,22 @@ def get_twitter_api(ti: TaskInstance, **kwargs):
     logging.info(tweet_requests)
 
 def transform_twitter_api_data_func(ti: TaskInstance, **kwargs):
-    client = storage.Client()
-    bucket = client.get_bucket("c-r-apache-airflow-cs280")
-    
     users = data=ti.xcom_pull(key="user_requests", task_ids="get_twitter_api_data_task")
     tweets = data=ti.xcom_pull(key="tweet_requests", task_ids="get_twitter_api_data_task")
     tweet_header_list = ['retweet_count', 'reply_count', 'like_count', 'quote_count', 'impression_count', 'tweet_id', 'text', 'id']
     user_header_list = ['followers_count','following_count','tweet_count','listed_count','name','username','id']
-    logging.info(users)
     user_matching_data = iterate_json_list(json.loads(users), user_header_list)
-    logging.info(user_matching_data)
     tweet_matching_data = iterate_json_list(json.loads(tweets), tweet_header_list)
     
-    
+    client = storage.Client()
+    bucket = client.get_bucket("c-r-apache-airflow-cs280")
     bucket.blob("data/user_requests.csv").upload_from_string(user_matching_data.to_csv(index=False), "text/csv")
     bucket.blob("data/tweet_requests.csv").upload_from_string(tweet_matching_data.to_csv(index=False), "text/csv")
 
 
 with DAG(
     dag_id="project_lab_1_etl",
-    schedule_interval="*/1 * * * *",
+    schedule_interval="0 9 * * *",
     start_date=pendulum.datetime(2023, 1, 1, tz="US/Pacific"),
     catchup=False,
 ) as dag:
