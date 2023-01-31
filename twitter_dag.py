@@ -7,7 +7,9 @@ from airflow.models import TaskInstance
 import requests
 import pandas as pd
 from google.cloud import storage
+from gcsfs import GCSFileSystem
 import json
+from databox import Client
 
 def flatten_json(data_dict, matching_data, keys_to_match):
     for key, value in data_dict.items():
@@ -32,7 +34,7 @@ def iterate_json_list(data_dict, keys_to_match):
 def get_twitter_api(ti: TaskInstance, **kwargs):
     user_ids = Variable.get("TWITTER_USER_IDS", deserialize_json=True)
     tweet_ids = Variable.get("TWITTER_TWEET_IDS", deserialize_json=True)
-    my_bearer_token = "AAAAAAAAAAAAAAAAAAAAAHrdlQEAAAAAu2vIvvakLLbGqgsBXAcjwyK6XQo%3Db3PuxzKm28q0lZQUZ6N55qocL7t2YQ4no6FEET9nfURgIb2YkC"
+    my_bearer_token = Variable.get("TWITTER_BEARER_TOKEN")
     header_token = {"Authorization": f"Bearer {my_bearer_token}"}
     user_requests = [requests.get(f"https://api.twitter.com/2/users/{id}?user.fields=public_metrics,profile_image_url,username,id,description", headers=header_token).json() for id in user_ids]
     tweet_requests = [requests.get(f"https://api.twitter.com/2/tweets/{id}?tweet.fields=author_id,text,public_metrics", headers=header_token).json() for id in tweet_ids]
@@ -54,6 +56,17 @@ def transform_twitter_api_data_func(ti: TaskInstance, **kwargs):
     bucket.blob("data/user_requests.csv").upload_from_string(user_matching_data.to_csv(index=False), "text/csv")
     bucket.blob("data/tweet_requests.csv").upload_from_string(tweet_matching_data.to_csv(index=False), "text/csv")
 
+def upload_databox():
+    user_token = Variable.get("DATABOX_TOKEN")
+    dbox = Client(user_token)
+    
+    fs = GCSFileSystem(project="Chance-Robinson-CS-280")
+    with fs.open('gs://c-r-apache-airflow-cs280/data/user_requests.csv', 'rb') as f:
+        my_df = pd.read_csv(f)
+        dbox.push("twitter_user_dag", )
+    with fs.open('gs://c-r-apache-airflow-cs280/data/tweet_requests.csv', 'rb') as f:
+        my_df = pd.read_csv(f)
+        dbox.push("twitter_tweet_dag", my_df)
 
 with DAG(
     dag_id="project_lab_1_etl",
@@ -71,5 +84,10 @@ with DAG(
         python_callable=transform_twitter_api_data_func,
         provide_context=True
     )
+    upload_databox_task = PythonOperator(
+        task_id="upload_databox_task",
+        python_callable=upload_databox,
+        provide_context=True
+    )
 
-get_twitter_api_data_task >> transform_twitter_api_data_task
+get_twitter_api_data_task >> transform_twitter_api_data_task >> upload_databox_task
