@@ -65,16 +65,16 @@ def upload_databox():
     with fs.open('gs://c-r-apache-airflow-cs280/data/user_requests.csv', 'r') as f:
         reader = csv.reader(f)
         header = next(reader)
-        name_index = header.index('name')
         data = [row for row in reader]
         logging.info(header)
         logging.info(data)
+        test_list = ['followers_count','following_count','listed_count','tweet_count']
         for val in data:
             logging.info(val)
             for idx, item in enumerate(val):
-                logging.info(f'{idx}: {item}')
-                logging.info(header[idx] != 'id')
-                if (type(item) == int or type(item) == float) and header[idx] != 'id':
+                count = test_list.count(header[idx])
+                name_index = header.index('name')
+                if count > 0:
                     dbox.push(f'UserMetric {val[name_index]} {header[idx]}', item)
     # with fs.open('gs://c-r-apache-airflow-cs280/data/tweet_requests.csv', 'r') as f:
     #     reader = csv.reader(f)
