@@ -58,9 +58,9 @@ def transform_twitter_api_data_func(ti: TaskInstance, **kwargs):
     bucket.blob("data/tweet_requests.csv").upload_from_string(tweet_matching_data.to_csv(index=False), "text/csv")
 
 def upload_databox():
-    # user_token = Variable.get("DATABOX_TOKEN")
-    user_token = "m4iwxhocxxqabnhs0cdwr"
+    user_token = Variable.get("DATABOX_TOKEN")
     dbox = Client(user_token)
+    dbox.push('testing', 3)
     
     fs = GCSFileSystem(project="Chance-Robinson-CS-280")
     with fs.open('gs://c-r-apache-airflow-cs280/data/user_requests.csv', 'r') as f:
