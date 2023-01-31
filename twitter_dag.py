@@ -16,7 +16,7 @@ def get_twitter_api(ti: TaskInstance, **kwargs):
     logging.info("Check id's")
     logging.info(user_ids)
     logging.info(tweet_ids)
-    loggin.info(header_token)
+    logging.info(header_token)
     logging.info("End id's")
     user_requests = [requests.get(f"https://api.twitter.com/2/users/{id}?user.fields=public_metrics,profile_image_url,username,id,description", headers=header_token).json() for id in user_ids]
     tweet_requests = [requests.get(f"https://api.twitter.com/2/tweets/{id}?tweet.fields=author_id,text,public_metrics", headers=header_token).json() for id in tweet_ids]
