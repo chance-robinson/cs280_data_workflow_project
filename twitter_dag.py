@@ -32,7 +32,7 @@ def transform_twitter_api_data_func(ti: TaskInstance, **kwargs):
 
 with DAG(
     dag_id="project_lab_1_etl",
-    schedule_interval="0 9 * * *",
+    schedule_interval="30 * * * *",
     start_date=pendulum.datetime(2023, 1, 1, tz="US/Pacific"),
     catchup=False,
 ) as dag:
