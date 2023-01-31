@@ -65,6 +65,7 @@ def upload_databox():
     with fs.open('gs://c-r-apache-airflow-cs280/data/user_requests.csv', 'r') as f:
         reader = csv.reader(f)
         header = next(reader)
+        name_index = header.index('name')
         data = [row for row in reader]
         logging.info(header)
         logging.info(data)
@@ -72,7 +73,7 @@ def upload_databox():
             logging.info(val)
             for idx, item in enumerate(val):
                 logging.info(f'{idx}: {item}')
-                dbox.push(f'user_metric_1-{header[idx]}', item)
+                dbox.push(f'User Metric: {header[name_index]}-{header[idx]}', item)
     # with fs.open('gs://c-r-apache-airflow-cs280/data/tweet_requests.csv', 'r') as f:
     #     reader = csv.reader(f)
     #     header = next(reader)
