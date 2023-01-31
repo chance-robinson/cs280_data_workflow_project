@@ -10,16 +10,20 @@ from google.cloud import storage
 
 def get_auth_header():
     my_bearer_token = Variable.get("TWITTER_BEARER_TOKEN", deserialize_json=True)
+    logging.info(my_bearer_token)
     return {"Authorization": f"Bearer {my_bearer_token}"}
 
 def get_twitter_api(ti: TaskInstance, **kwargs):
     user_ids = Variable.get("TWITTER_USER_IDS", deserialize_json=True)
     tweet_ids = Variable.get("TWITTER_TWEET_IDS", deserialize_json=True)
+    logging.info(user_ids)
+    logging.info(tweet_ids)
     user_requests = [requests.get(f"https://api.twitter.com/2/users/{id}?user.fields=public_metrics,profile_image_url,username,id,description", headers=get_auth_header()).json() for id in user_ids]
     tweet_requests = [requests.get(f"https://api.twitter.com/2/tweets/{id}?tweet.fields=author_id,text,public_metrics", headers=get_auth_header()).json() for id in tweet_ids]
     ti.xcom_push("user_requests", user_requests)
     ti.xcom_push("tweet_requests", tweet_requests)
-    logging.info(user_requests,tweet_requests)
+    logging.info(user_requests)
+    logging.info(tweet_requests)
 
 def transform_twitter_api_data_func(ti: TaskInstance, **kwargs):
     user_requests = pd.DataFrame(data=ti.xcom_pull(key="user_requests", task_ids="get_twitter_api_data_task"))
