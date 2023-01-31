@@ -83,7 +83,7 @@ def upload_databox():
                 'timestamp': row[1],
                 'value': row[0]
             })
-        dbox.bulk_push('tweet_metrics', payload)
+        dbox.push('tweet_metrics', payload)
 
 with DAG(
     dag_id="project_lab_1_etl",
