@@ -72,7 +72,7 @@ def upload_databox():
                 'timestamp': row[1],
                 'value': row[0]
             })
-        dbox.bulk_push('user_metrics', payload)
+        dbox.push('user_metrics', payload)
     with fs.open('gs://c-r-apache-airflow-cs280/data/tweet_requests.csv', 'r') as f:
         reader = csv.reader(f)
         header = next(reader)
