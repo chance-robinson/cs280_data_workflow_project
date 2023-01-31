@@ -81,9 +81,9 @@ def upload_databox():
         for val in data:
             for idx, item in enumerate(val):
                 count = test_list.count(header[idx])
-                name_index = header.index('name')
+                tweet_index = header.index('tweet_id')
                 if count > 0:
-                    dbox.push(f'TweetMetric {val[name_index]} {header[idx]}', item)
+                    dbox.push(f'TweetMetric {val[tweet_index]} {header[idx]}', item)
 
 with DAG(
     dag_id="project_lab_1_etl",
