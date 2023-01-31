@@ -63,7 +63,7 @@ def upload_databox():
     fs = GCSFileSystem(project="Chance-Robinson-CS-280")
     with fs.open('gs://c-r-apache-airflow-cs280/data/user_requests.csv', 'rb') as f:
         my_df = pd.read_csv(f)
-        dbox.push("twitter_user_dag", )
+        dbox.push("twitter_user_dag", my_df)
     with fs.open('gs://c-r-apache-airflow-cs280/data/tweet_requests.csv', 'rb') as f:
         my_df = pd.read_csv(f)
         dbox.push("twitter_tweet_dag", my_df)
