@@ -58,12 +58,15 @@ def transform_twitter_api_data_func(ti: TaskInstance, **kwargs):
 
 def upload_databox():
     user_token = Variable.get("DATABOX_TOKEN")
+    logging.info(user_token)
     dbox = Client(user_token)
     
     fs = GCSFileSystem(project="Chance-Robinson-CS-280")
     with fs.open('gs://c-r-apache-airflow-cs280/data/user_requests.csv', 'rb') as f:
         my_df = pd.read_csv(f)
+        logging.info(my_df.head())
         dbox.push("twitter_user_dag", my_df)
+        logging.info("here?")
     with fs.open('gs://c-r-apache-airflow-cs280/data/tweet_requests.csv', 'rb') as f:
         my_df = pd.read_csv(f)
         dbox.push("twitter_tweet_dag", my_df)
