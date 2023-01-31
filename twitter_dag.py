@@ -57,7 +57,7 @@ def transform_twitter_api_data_func(ti: TaskInstance, **kwargs):
     bucket.blob("data/user_requests.csv").upload_from_string(user_matching_data.to_csv(index=False), "text/csv")
     bucket.blob("data/tweet_requests.csv").upload_from_string(tweet_matching_data.to_csv(index=False), "text/csv")
 
-def upload_databox(**kwargs):
+def upload_databox(ti: TaskInstance, **kwargs):
     user_token = Variable.get("DATABOX_TOKEN")
     dbox = Client(user_token)
     
