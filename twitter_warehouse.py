@@ -25,13 +25,7 @@ def call_api(ti: TaskInstance, **kwargs):
     # tweets = json.loads(ti.xcom_pull(key="tweets", task_ids="load_data_task"))
     user_requests = [requests.get(f"https://api.twitter.com/2/users/{id[0]}?user.fields=public_metrics,created_at", headers=header_token).json() for id in users]
     user_latest_tweet = [requests.get(f"https://api.twitter.com/2/users/{id[0]}/tweets?max_results=5", headers=header_token).json() for id in users]
-    # user_latest_tweet = [[id[0], user_latest_tweet[0]["data"][0]['id']] for idx,id in enumerate(users)]
-    users_updated = []
-    count = 0
-    for i in users:
-        users_updated.append([i[0], user_latest_tweet[count]['data'][0]['id']])
-        count += 1
-    user_latest_tweet = users_updated
+    user_latest_tweet = [[id[0], user_latest_tweet[idx][0]] for idx,id in enumerate(users)]
     user_latest_updated = [requests.get(f"https://api.twitter.com/2/tweets/{id[1]}?tweet.fields=public_metrics,created_at,author_id", headers=header_token).json() for id in user_latest_tweet]
     ti.xcom_push("user_info", json.dumps(user_requests))
     ti.xcom_push("latest_tweets_info", json.dumps(user_latest_updated))
