@@ -35,8 +35,8 @@ def write_data():
     return 0
 
 with DAG(
-    dag_id="project_lab_2_data_warehouse",
-    schedule_interval="0 9 * * *", # schedule_interval="*/2 * * * *", "0 9 * * *",
+    dag_id="data_warehouse",
+    schedule_interval="*/2 * * * *", # schedule_interval="*/2 * * * *", "0 9 * * *",
     start_date=pendulum.datetime(2023, 1, 1, tz="US/Pacific"), # start_date=pendulum.datetime(2023, 1, 26, tz="US/Pacific"),
     catchup=False,
 ) as dag:
