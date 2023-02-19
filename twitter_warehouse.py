@@ -22,11 +22,8 @@ def call_api(ti: TaskInstance, **kwargs):
     my_bearer_token = Variable.get("TWITTER_BEARER_TOKEN")
     header_token = {"Authorization": f"Bearer {my_bearer_token}"}
     users = data=ti.xcom_pull(key="users", task_ids="load_data_task")
-    print(users)
-    print(" ")
-    tweets = data=ti.xcom_pull(key="tweets", task_ids="load_data_task")
+    # tweets = data=ti.xcom_pull(key="tweets", task_ids="load_data_task")
     user_requests = [requests.get(f"https://api.twitter.com/2/users/{id[0]}?user.fields=public_metrics", headers=header_token).json() for id in users]
-    user_tweet_requests = [requests.get(f"https://api.twitter.com/2/tweets/{id[0]}?tweet.fields=author_id,text,public_metrics", headers=header_token).json() for id in tweets]
     print(user_requests)
 
 def transform_data():
