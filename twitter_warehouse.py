@@ -16,20 +16,19 @@ from gcsfs import GCSFileSystem
 
 def flatten_json(input_json):
     output_dict = {}
-
     def flatten(sub_json):
         for key in sub_json:
             value = sub_json[key]
-            if isinstance(value, dict):
+            if isinstance(value, list):
+                for i, item in enumerate(value):
+                    flatten(item)
+            elif isinstance(value, dict):
                 flatten(value)
             else:
                 output_dict[key] = value
 
     flatten(input_json)
     return output_dict
-
-
-
 
 def load_data(ti: TaskInstance, **kwargs):   
     session = Session()
