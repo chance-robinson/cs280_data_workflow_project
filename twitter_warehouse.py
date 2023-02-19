@@ -22,13 +22,16 @@ def call_api(ti: TaskInstance, **kwargs):
     my_bearer_token = "AAAAAAAAAAAAAAAAAAAAAHrdlQEAAAAAu2vIvvakLLbGqgsBXAcjwyK6XQo%3Db3PuxzKm28q0lZQUZ6N55qocL7t2YQ4no6FEET9nfURgIb2YkC"
     header_token = {"Authorization": f"Bearer {my_bearer_token}"}
     users = json.loads(ti.xcom_pull(key="users", task_ids="load_data_task"))
-    tweets = json.loads(ti.xcom_pull(key="tweets", task_ids="load_data_task"))
+    # tweets = json.loads(ti.xcom_pull(key="tweets", task_ids="load_data_task"))
     user_requests = [requests.get(f"https://api.twitter.com/2/users/{id[0]}?user.fields=public_metrics,created_at", headers=header_token).json() for id in users]
+    print(user_requests)
     user_latest_tweet = [requests.get(f"https://api.twitter.com/2/users/{id[0]}/tweets?max_results=5", headers=header_token).json() for id in users]
+    print(user_latest_tweet)
     user_latest_tweet = [[id[0], users[idx]['data'][0]['id']] for idx,id in enumerate(users)]
+    print("gap")
+    print(user_latest_tweet)
     user_latest_updated = [requests.get(f"https://api.twitter.com/2/tweets/{id[1]}?tweet.fields=public_metrics,created_at", headers=header_token).json() for id in user_latest_tweet]
     # https://api.twitter.com/2/users/:id/tweets?max_results=5
-    print(user_requests)
     print(" ")
     print(user_latest_updated)
 
