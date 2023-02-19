@@ -13,19 +13,23 @@ import pandas as pd
 from google.cloud import storage
 from gcsfs import GCSFileSystem
 
-def flatten(obj):
-    if isinstance(obj, dict):
-        items = []
-        for key, value in obj.items():
-            items.extend(flatten(value).items())
-        return dict(items)
-    elif isinstance(obj, list):
-        items = []
-        for i in obj:
-            items.append(flatten(i))
-        return items
-    else:
-        return obj
+
+def flatten_json(nested_json, sep='_'):
+    """
+    Flatten a JSON file to a single level dictionary.
+    """
+    flattened_dict = {}
+    
+    def flatten(sub_json, name=''):
+        if isinstance(sub_json, dict):
+            for key, value in sub_json.items():
+                flatten(value, f"{name}{sep}{key}" if name else key)
+        else:
+            flattened_dict[name] = sub_json
+            
+    flatten(nested_json)
+    
+    return flattened_dict
 
 
 
@@ -52,8 +56,8 @@ def call_api(ti: TaskInstance, **kwargs):
 def transform_data(ti: TaskInstance, **kwargs):
     user_info = json.loads(ti.xcom_pull(key="user_requests", task_ids="call_api_task"))
     tweet_info = json.loads(ti.xcom_pull(key="user_latest_updated", task_ids="call_api_task"))
-    user_dict = flatten(user_info)
-    tweet_dict = flatten(tweet_info)
+    user_dict = flatten_json(user_info)
+    tweet_dict = flatten_json(tweet_info)
     print(user_dict)
     print(tweet_dict)
     
