@@ -19,7 +19,7 @@ def load_data(ti: TaskInstance, **kwargs):
     ti.xcom_push("tweets", json.dumps(tweets))
 
 def call_api(ti: TaskInstance, **kwargs):
-    my_bearer_token = Variable.get("TWITTER_BEARER_TOKEN")
+    my_bearer_token = "AAAAAAAAAAAAAAAAAAAAAHrdlQEAAAAAu2vIvvakLLbGqgsBXAcjwyK6XQo%3Db3PuxzKm28q0lZQUZ6N55qocL7t2YQ4no6FEET9nfURgIb2YkC"
     header_token = {"Authorization": f"Bearer {my_bearer_token}"}
     users = data=ti.xcom_pull(key="users", task_ids="load_data_task")
     # tweets = data=ti.xcom_pull(key="tweets", task_ids="load_data_task")
