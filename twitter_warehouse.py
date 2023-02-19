@@ -11,7 +11,7 @@ from models.tweet import Tweet
 import json
 
 def load_data(ti: TaskInstance, **kwargs):   
-    session = Session()
+    session = Session
     logging(f"{session}")
     users = session.query(User).all() 
     tweets = session.query(Tweet).all() 
