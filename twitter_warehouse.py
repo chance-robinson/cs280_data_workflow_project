@@ -14,24 +14,18 @@ from google.cloud import storage
 from gcsfs import GCSFileSystem
 
 
-def flatten_json(input_json):
-    output_dict = {}
-
-    def flatten(sub_json, prefix=""):
-        for key in sub_json:
-            value = sub_json[key]
-            new_key = f"{prefix}{key}" if prefix else key
-
+def flatten_dict_list(dict_list):
+    flattened = {}
+    for dictionary in dict_list:
+        for key, value in dictionary.items():
             if isinstance(value, dict):
-                flatten(value, f"{new_key}_")
-            elif isinstance(value, list):
-                for i, item in enumerate(value):
-                    flatten(item, f"{new_key}_{i}_")
+                nested_dict = flatten_dict_list([value])
+                for nested_key, nested_value in nested_dict.items():
+                    flattened[f"{key}.{nested_key}"] = nested_value
             else:
-                output_dict[new_key] = value
+                flattened[key] = value
+    return flattened
 
-    flatten(input_json)
-    return output_dict
 
 
 def load_data(ti: TaskInstance, **kwargs):   
@@ -59,8 +53,8 @@ def transform_data(ti: TaskInstance, **kwargs):
     tweet_info = json.loads(ti.xcom_pull(key="user_latest_updated", task_ids="call_api_task"))
     print(user_info)
     print(tweet_info)
-    user_dict = flatten_json(user_info)
-    tweet_dict = flatten_json(tweet_info)
+    user_dict = flatten_dict_list(user_info)
+    tweet_dict = flatten_dict_list(tweet_info)
     print(user_dict)
     print(tweet_dict)
     
