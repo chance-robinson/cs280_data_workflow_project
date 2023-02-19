@@ -14,22 +14,20 @@ from google.cloud import storage
 from gcsfs import GCSFileSystem
 
 
-def flatten_json(nested_json, sep='_'):
-    """
-    Flatten a JSON file to a single level dictionary.
-    """
-    flattened_dict = {}
-    
-    def flatten(sub_json, name=''):
-        if isinstance(sub_json, dict):
-            for key, value in sub_json.items():
-                flatten(value, f"{name}{sep}{key}" if name else key)
-        else:
-            flattened_dict[name] = sub_json
-            
-    flatten(nested_json)
-    
-    return flattened_dict
+def flatten_json(input_json):
+    output_dict = {}
+
+    def flatten(sub_json):
+        for key in sub_json:
+            value = sub_json[key]
+            if isinstance(value, dict):
+                flatten(value)
+            else:
+                output_dict[key] = value
+
+    flatten(input_json)
+    return output_dict
+
 
 
 
