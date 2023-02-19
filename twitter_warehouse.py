@@ -12,8 +12,8 @@ import json
 
 def load_data(ti: TaskInstance, **kwargs):   
     session = Session()
+    logging(f"{session}")
     users = session.query(User).all() 
-    logging(users)
     tweets = session.query(Tweet).all() 
     session.close()
     ti.xcom_push("users", json.dumps(users))
