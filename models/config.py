@@ -9,7 +9,7 @@ def create_dburl():
   port = Variable.get("DATABASE_PORT")
   database = Variable.get("DATABASE_NAME")
 #   return f"postgresql+psycopg2://{username}:{password}@{hostname}:{port}/{database}"
-  return f"postgresql+psycopg2://docker-proxy:robinson@0.0.0.0:5433/twitter"
+  return f"postgresql+psycopg2://docker-proxy:robinson@0.0.0.0:5432/twitter"
 
 engine = create_engine(create_dburl())
 Session = sessionmaker(bind=engine)
