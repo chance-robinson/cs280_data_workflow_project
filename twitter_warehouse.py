@@ -9,6 +9,19 @@ from models.config import Session #You would import this from your config file
 from models.users import User
 from models.tweet import Tweet
 import json
+import pandas as pd
+from google.cloud import storage
+from gcsfs import GCSFileSystem
+
+def flatten_dict(d):
+    items = []
+    for k, v in d.items():
+        if isinstance(v, dict):
+            items.extend(flatten_dict(v).items())
+        else:
+            items.append((k, v))
+    return dict(items)
+
 
 def load_data(ti: TaskInstance, **kwargs):   
     session = Session()
@@ -33,8 +46,15 @@ def call_api(ti: TaskInstance, **kwargs):
 def transform_data(ti: TaskInstance, **kwargs):
     user_info = json.loads(ti.xcom_pull(key="user_requests", task_ids="call_api_task"))
     tweet_info = json.loads(ti.xcom_pull(key="user_latest_updated", task_ids="call_api_task"))
-    print(user_info)
-    print(tweet_info)
+    user_dict = flatten_dict(user_info)
+    tweet_dict = flatten_dict(tweet_info)
+    print(user_dict)
+    print(tweet_dict)
+    
+    # client = storage.Client()
+    # bucket = client.get_bucket("c-r-apache-airflow-cs280")
+    # bucket.blob("data/users.csv").upload_from_string(user_info.to_csv(index=False), "text/csv")
+    # bucket.blob("data/tweets.csv").upload_from_string(tweet_info.to_csv(index=False), "text/csv")
     
 def write_data():
     return 0
