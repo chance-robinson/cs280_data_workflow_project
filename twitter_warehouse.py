@@ -27,10 +27,10 @@ def call_api(ti: TaskInstance, **kwargs):
     print(user_requests)
     user_latest_tweet = [requests.get(f"https://api.twitter.com/2/users/{id[0]}/tweets?max_results=5", headers=header_token).json() for id in users]
     print("gap0")
-    print(user_latest_tweet[0])
-    user_latest_tweet = [[id[0], user_latest_tweet[idx]['data'][0]['id']] for idx,id in enumerate(users)]
-    print("gap1")
-    print(user_latest_tweet)
+    print(user_latest_tweet[0]["data"])
+    # user_latest_tweet = [[id[0], user_latest_tweet[idx]['data'][0]['id']] for idx,id in enumerate(users)]
+    # print("gap1")
+    # print(user_latest_tweet)
     # user_latest_updated = [requests.get(f"https://api.twitter.com/2/tweets/{id[1]}?tweet.fields=public_metrics,created_at", headers=header_token).json() for id in user_latest_tweet]
     # https://api.twitter.com/2/users/:id/tweets?max_results=5
     # print(" ")
