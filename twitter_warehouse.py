@@ -21,7 +21,7 @@ def load_data(ti: TaskInstance, **kwargs):
 def call_api(ti: TaskInstance, **kwargs):
     my_bearer_token = "AAAAAAAAAAAAAAAAAAAAAHrdlQEAAAAAu2vIvvakLLbGqgsBXAcjwyK6XQo%3Db3PuxzKm28q0lZQUZ6N55qocL7t2YQ4no6FEET9nfURgIb2YkC"
     header_token = {"Authorization": f"Bearer {my_bearer_token}"}
-    users = data=ti.xcom_pull(key="users", task_ids="load_data_task")
+    users = json.loads(data=ti.xcom_pull(key="users", task_ids="load_data_task"))
     # tweets = data=ti.xcom_pull(key="tweets", task_ids="load_data_task")
     # user_requests = [requests.get(f"https://api.twitter.com/2/users/{id}?user.fields=public_metrics", headers=header_token).json() for id in users]
     for i in users:
