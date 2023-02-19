@@ -12,6 +12,7 @@ import json
 import pandas as pd
 from google.cloud import storage
 from gcsfs import GCSFileSystem
+import csv
 
 
 def flatten_list_of_dicts(lst):
