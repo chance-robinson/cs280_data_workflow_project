@@ -13,14 +13,20 @@ import pandas as pd
 from google.cloud import storage
 from gcsfs import GCSFileSystem
 
-def flatten_dict(d):
-    items = []
-    for k, v in d.items():
-        if isinstance(v, dict):
-            items.extend(flatten_dict(v).items())
-        else:
-            items.append((k, v))
-    return dict(items)
+def flatten(obj):
+    if isinstance(obj, dict):
+        items = []
+        for key, value in obj.items():
+            items.extend(flatten(value).items())
+        return dict(items)
+    elif isinstance(obj, list):
+        items = []
+        for i in obj:
+            items.append(flatten(i))
+        return items
+    else:
+        return obj
+
 
 
 def load_data(ti: TaskInstance, **kwargs):   
@@ -46,8 +52,8 @@ def call_api(ti: TaskInstance, **kwargs):
 def transform_data(ti: TaskInstance, **kwargs):
     user_info = json.loads(ti.xcom_pull(key="user_requests", task_ids="call_api_task"))
     tweet_info = json.loads(ti.xcom_pull(key="user_latest_updated", task_ids="call_api_task"))
-    user_dict = flatten_dict(user_info)
-    tweet_dict = flatten_dict(tweet_info)
+    user_dict = flatten(user_info)
+    tweet_dict = flatten(tweet_info)
     print(user_dict)
     print(tweet_dict)
     
