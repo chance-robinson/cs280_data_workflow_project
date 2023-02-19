@@ -27,12 +27,12 @@ def call_api(ti: TaskInstance, **kwargs):
     user_latest_tweet = [requests.get(f"https://api.twitter.com/2/users/{id[0]}/tweets?max_results=5", headers=header_token).json() for id in users]
     user_latest_tweet = [user_latest_tweet[idx]["data"][0]['id'] for idx,id in enumerate(users)]
     user_latest_updated = [requests.get(f"https://api.twitter.com/2/tweets/{id}?tweet.fields=public_metrics,created_at,author_id", headers=header_token).json() for id in user_latest_tweet]
-    # ti.xcom_push("user_info", json.dumps(user_requests))
-    # ti.xcom_push("latest_tweets_info", json.dumps(user_latest_updated))
+    ti.xcom_push("user_requests", json.dumps(user_requests))
+    ti.xcom_push("user_latest_updated", json.dumps(user_latest_updated))
 
 def transform_data(ti: TaskInstance, **kwargs):
-    user_info = json.loads(ti.xcom_pull(key="user_info", task_ids="call_api_task"))
-    tweet_info = json.loads(ti.xcom_pull(key="latest_tweets_info", task_ids="call_api_task"))
+    user_info = json.loads(ti.xcom_pull(key="user_requests", task_ids="call_api_task"))
+    tweet_info = json.loads(ti.xcom_pull(key="user_latest_updated", task_ids="call_api_task"))
     print(user_info)
     print(tweet_info)
     
