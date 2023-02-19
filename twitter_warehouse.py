@@ -16,19 +16,23 @@ from gcsfs import GCSFileSystem
 
 def flatten_json(input_json):
     output_dict = {}
-    def flatten(sub_json):
+
+    def flatten(sub_json, prefix=""):
         for key in sub_json:
             value = sub_json[key]
-            if isinstance(value, list):
+            new_key = f"{prefix}{key}" if prefix else key
+
+            if isinstance(value, dict):
+                flatten(value, f"{new_key}_")
+            elif isinstance(value, list):
                 for i, item in enumerate(value):
-                    flatten(item)
-            elif isinstance(value, dict):
-                flatten(value)
+                    flatten(item, f"{new_key}_{i}_")
             else:
-                output_dict[key] = value
+                output_dict[new_key] = value
 
     flatten(input_json)
     return output_dict
+
 
 def load_data(ti: TaskInstance, **kwargs):   
     session = Session()
@@ -53,6 +57,8 @@ def call_api(ti: TaskInstance, **kwargs):
 def transform_data(ti: TaskInstance, **kwargs):
     user_info = json.loads(ti.xcom_pull(key="user_requests", task_ids="call_api_task"))
     tweet_info = json.loads(ti.xcom_pull(key="user_latest_updated", task_ids="call_api_task"))
+    print(user_info)
+    print(tweet_info)
     user_dict = flatten_json(user_info)
     tweet_dict = flatten_json(tweet_info)
     print(user_dict)
@@ -68,7 +74,7 @@ def write_data():
 
 with DAG(
     dag_id="data_warehouse",
-    schedule_interval="*/1 * * * *", # schedule_interval="*/2 * * * *", "0 9 * * *",
+    schedule_interval="*/2 * * * *", # schedule_interval="*/2 * * * *", "0 9 * * *",
     start_date=pendulum.datetime(2023, 1, 1, tz="US/Pacific"), # start_date=pendulum.datetime(2023, 1, 26, tz="US/Pacific"),
     catchup=False,
 ) as dag:
