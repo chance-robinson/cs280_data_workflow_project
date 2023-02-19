@@ -14,19 +14,20 @@ from google.cloud import storage
 from gcsfs import GCSFileSystem
 
 
-def flatten_dict_list(dict_list):
-    flattened = {}
-    for dictionary in dict_list:
-        for key, value in dictionary.items():
-            if isinstance(value, dict):
-                nested_dict = flatten_dict_list([value])
-                for nested_key, nested_value in nested_dict.items():
-                    flattened[f"{key}.{nested_key}"] = nested_value
-            else:
-                flattened[key] = value
-    return flattened
+def flatten_list_of_dicts(lst):
+    results = []
+    for item in lst:
+        result = {}
+        flatten_dict("", item, result)
+        results.append(result)
+    return results
 
-
+def flatten_dict(prefix, d, result):
+    for key, value in d.items():
+        if isinstance(value, dict):
+            flatten_dict(f"{prefix}{key}.", value, result)
+        else:
+            result[f"{prefix}{key}"] = value
 
 def load_data(ti: TaskInstance, **kwargs):   
     session = Session()
@@ -51,17 +52,15 @@ def call_api(ti: TaskInstance, **kwargs):
 def transform_data(ti: TaskInstance, **kwargs):
     user_info = json.loads(ti.xcom_pull(key="user_requests", task_ids="call_api_task"))
     tweet_info = json.loads(ti.xcom_pull(key="user_latest_updated", task_ids="call_api_task"))
-    print(user_info)
-    print(tweet_info)
-    user_dict = flatten_dict_list(user_info)
-    tweet_dict = flatten_dict_list(tweet_info)
-    print(user_dict)
-    print(tweet_dict)
-    
-    # client = storage.Client()
-    # bucket = client.get_bucket("c-r-apache-airflow-cs280")
-    # bucket.blob("data/users.csv").upload_from_string(user_info.to_csv(index=False), "text/csv")
-    # bucket.blob("data/tweets.csv").upload_from_string(tweet_info.to_csv(index=False), "text/csv")
+    user_dict = flatten_list_of_dicts(user_info)
+    tweet_dict = flatten_list_of_dicts(tweet_info)
+    df = pd.DataFrame(user_dict)
+    df = pd.DataFrame(tweet_dict)
+
+    client = storage.Client()
+    bucket = client.get_bucket("c-r-apache-airflow-cs280")
+    bucket.blob("data/users.csv").upload_from_string(user_info.to_csv(index=False), "text/csv")
+    bucket.blob("data/tweets.csv").upload_from_string(tweet_info.to_csv(index=False), "text/csv")
     
 def write_data():
     return 0
