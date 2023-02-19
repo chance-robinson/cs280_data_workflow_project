@@ -12,8 +12,8 @@ import json
 
 def load_data(ti: TaskInstance, **kwargs):   
     session = Session()
-    users = session.query(User).all() 
-    tweets = session.query(Tweet).all() 
+    users = session.query(User.user_id).all() 
+    tweets = session.query(Tweet.tweet_id).all() 
     session.close()
     ti.xcom_push("users", json.dumps(users))
     ti.xcom_push("tweets", json.dumps(tweets))
@@ -25,8 +25,8 @@ def call_api(ti: TaskInstance, **kwargs):
     print(users)
     print(" ")
     tweets = data=ti.xcom_pull(key="tweets", task_ids="load_data_task")
-    user_requests = [requests.get(f"https://api.twitter.com/2/users/{id}?user.fields=public_metrics,profile_image_url,username,id,description", headers=header_token).json() for id in users.user_id]
-    tweet_requests = [requests.get(f"https://api.twitter.com/2/tweets/{id}?tweet.fields=author_id,text,public_metrics", headers=header_token).json() for id in tweets.tweet_id]
+    user_requests = [requests.get(f"https://api.twitter.com/2/users/{id}?user.fields=public_metrics,profile_image_url,username,id,description", headers=header_token).json() for id in users]
+    tweet_requests = [requests.get(f"https://api.twitter.com/2/tweets/{id}?tweet.fields=author_id,text,public_metrics", headers=header_token).json() for id in tweets]
     print(user_requests)
 
 def transform_data():
