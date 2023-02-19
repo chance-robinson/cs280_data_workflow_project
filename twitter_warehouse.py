@@ -55,13 +55,13 @@ def transform_data(ti: TaskInstance, **kwargs):
     tweet_info = json.loads(ti.xcom_pull(key="user_latest_updated", task_ids="call_api_task"))
     user_dict = flatten_list_of_dicts(user_info)
     tweet_dict = flatten_list_of_dicts(tweet_info)
-    df = pd.DataFrame(user_dict)
-    df = pd.DataFrame(tweet_dict)
+    user_df = pd.DataFrame(user_dict)
+    tweet_df = pd.DataFrame(tweet_dict)
 
     client = storage.Client()
     bucket = client.get_bucket("c-r-apache-airflow-cs280")
-    bucket.blob("data/users.csv").upload_from_string(user_info.to_csv(index=False), "text/csv")
-    bucket.blob("data/tweets.csv").upload_from_string(tweet_info.to_csv(index=False), "text/csv")
+    bucket.blob("data/users.csv").upload_from_string(user_df.to_csv(index=False), "text/csv")
+    bucket.blob("data/tweets.csv").upload_from_string(tweet_df.to_csv(index=False), "text/csv")
     
 def write_data():
     return 0
