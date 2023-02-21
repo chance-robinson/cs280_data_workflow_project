@@ -88,9 +88,9 @@ def write_data():
         else:
             myDict = header_index_vals(header, match_headers)
             user = User(
-                user_id = val[myDict['data.id']]
-                username = val[myDict['data.username']]
-                name = val[myDict['data.name']]
+                user_id = val[myDict['data.id']],
+                username = val[myDict['data.username']],
+                name = val[myDict['data.name']],
                 created_at = val[myDict['data.created_at']]
             )
             session.add(user)
@@ -112,11 +112,11 @@ def write_data():
         else:
             myDict = header_index_vals(header, match_headers)
             user_timeseries = User_Timeseries(
-                user_id = val[myDict['data.id']]
-                followers_count = val[myDict['data.public_metrics.followers_count']]
-                following_count = val[myDict['data.public_metrics.following_count']]
-                tweet_count = val[myDict['data.public_metrics.tweet_count']]
-                listed_count = val[myDict['data.public_metrics.listed_count']
+                user_id = val[myDict['data.id']],
+                followers_count = val[myDict['data.public_metrics.followers_count']],
+                following_count = val[myDict['data.public_metrics.following_count']],
+                tweet_count = val[myDict['data.public_metrics.tweet_count']],
+                listed_count = val[myDict['data.public_metrics.listed_count'],
                 date = datetime.now()
             )
             session.add(user_timeseries)
@@ -137,9 +137,9 @@ def write_data():
         else:
             myDict = header_index_vals(header, match_headers)
             tweet_timeseries = Tweet_timeseries(
-                tweet_id = val[myDict['data.id']]
-                retweet_count = val[myDict['data.public_metrics.retweet_count']]
-                favorite_count = val[myDict['data.public_metrics.like_count']]
+                tweet_id = val[myDict['data.id']],
+                retweet_count = val[myDict['data.public_metrics.retweet_count']],
+                favorite_count = val[myDict['data.public_metrics.like_count']],
                 date = datetime.now()
             )
             session.add(tweet_timeseries)
@@ -158,9 +158,9 @@ def write_data():
         else:
             myDict = header_index_vals(header, match_headers)
             tweet = Tweet(
-                tweet_id = val[myDict['data.id']]
-                user_id = val[myDict['data.author_id']]
-                text = val[myDict['data.text']]
+                tweet_id = val[myDict['data.id']],
+                user_id = val[myDict['data.author_id']],
+                text = val[myDict['data.text']],
                 created_at = val[myDict['data.created_at']]
             )
             session.add(tweet)
