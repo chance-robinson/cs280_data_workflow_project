@@ -200,7 +200,7 @@ def write_data():
 with DAG(
     dag_id="data_warehouse",
     schedule_interval="0 9 * * *",
-    start_date=pendulum.datetime(2023, 1, 26, tz="US/Pacific"),
+    start_date=pendulum.datetime(2023, 1, 1, tz="US/Pacific"),
     catchup=False,
 ) as dag:
     # load_data_task = PythonOperator(
