@@ -105,6 +105,8 @@ def write_data():
         q = session.query(User_Timeseries)
         if (q.filter(User_Timeseries.user_id==val[myDict['data.id']])):
             record = q.filter(User_Timeseries.user_id==val[myDict['data.id']]).first()
+            print(record)
+            print(val)
             record.followers_count = val[myDict['data.public_metrics.followers_count']]
             record.following_count = val[myDict['data.public_metrics.following_count']]
             record.tweet_count = val[myDict['data.public_metrics.tweet_count']]
@@ -179,16 +181,15 @@ def write_data():
             # create_data_users(header, user_headers, val)
             create_data_users_timeseries(header, user_timeseries_headers, val)
 
-    with fs.open('gs://c-r-apache-airflow-cs280/data/tweets.csv', 'r') as csvfile:
-        reader = csv.reader(csvfile)
-        header = next(reader)
-        data = [row for row in reader]
-        tweet_headers = ['data.id','data.author_id','data.text','data.created_at']
-        tweet_timeseries_headers = ['data.id','data.public_metrics.retweet_count','data.public_metrics.like_count']
-        for val in data:
-            # create_data_tweets(header, tweet_headers, val)
-            # create_data_tweets_timeseries(header, tweet_timeseries_headers, val)
-            print("ok")
+    # with fs.open('gs://c-r-apache-airflow-cs280/data/tweets.csv', 'r') as csvfile:
+    #     reader = csv.reader(csvfile)
+    #     header = next(reader)
+    #     data = [row for row in reader]
+    #     tweet_headers = ['data.id','data.author_id','data.text','data.created_at']
+    #     tweet_timeseries_headers = ['data.id','data.public_metrics.retweet_count','data.public_metrics.like_count']
+    #     for val in data:
+    #         create_data_tweets(header, tweet_headers, val)
+    #         create_data_tweets_timeseries(header, tweet_timeseries_headers, val)
 
 with DAG(
     dag_id="data_warehouse",
