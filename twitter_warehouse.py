@@ -104,12 +104,9 @@ def write_data():
         myDict = header_index_vals(header, match_headers)
         print(session)
         q = session.query(User_Timeseries)
-        z = session.query(User)
         print(q)
-        print(z)
         print(q.all())
-        print(z.all())
-        if (q.filter(user_id=val[myDict['data.id']])) and not (q.all() == []):
+        if (q.filter(user_timeseries_id=val[myDict['data.id']])) and (q.all()):
             record = q.filter(user_id=val[myDict['data.id']]).first()
             print(record)
             print(val)
