@@ -106,7 +106,7 @@ def write_data():
             record.followers_count = val[myDict['data.public_metrics.followers_count']]
             record.following_count = val[myDict['data.public_metrics.following_count']]
             record.tweet_count = val[myDict['data.public_metrics.tweet_count']]
-            record.listed_count = val[myDict['data.public_metrics.listed_count']
+            record.listed_count = val[myDict['data.public_metrics.listed_count']]
             record.date = datetime.now()
         # create
         else:
