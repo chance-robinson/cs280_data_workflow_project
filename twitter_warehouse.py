@@ -106,7 +106,7 @@ def write_data():
         print(q.all())
         print(q.filter(User_Timeseries.user_id==val[myDict['data.id']]).first())
         print(val[myDict['data.id']])
-        if (q.filter(User_Timeseries.user_id==val[myDict['data.id']])) and (q.all()):
+        if (q.filter(User_Timeseries.user_id==val[myDict['data.id']])) and (q.all()) and not(q.filter(User_Timeseries.user_id==val[myDict['data.id']]).first() == None):
             q = q.filter(User_Timeseries.user_id==val[myDict['data.id']])
             print(q)
             record = q.one()
