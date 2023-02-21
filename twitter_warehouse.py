@@ -42,7 +42,7 @@ def load_data(ti: TaskInstance, **kwargs):
     ti.xcom_push("tweets", json.dumps(tweets))
 
 def call_api(ti: TaskInstance, **kwargs):
-    my_bearer_token = "AAAAAAAAAAAAAAAAAAAAAHrdlQEAAAAAu2vIvvakLLbGqgsBXAcjwyK6XQo%3Db3PuxzKm28q0lZQUZ6N55qocL7t2YQ4no6FEET9nfURgIb2YkC"
+    my_bearer_token = Variable.get("TWITTER_BEARER_TOKEN")
     header_token = {"Authorization": f"Bearer {my_bearer_token}"}
     users = json.loads(ti.xcom_pull(key="users", task_ids="load_data_task"))
     # tweets = json.loads(ti.xcom_pull(key="tweets", task_ids="load_data_task"))
@@ -196,26 +196,25 @@ with DAG(
     start_date=pendulum.datetime(2023, 1, 1, tz="US/Pacific"),
     catchup=False,
 ) as dag:
-    # load_data_task = PythonOperator(
-    #     task_id="load_data_task", 
-    #     python_callable=load_data,
-    #     provide_context=True
-    # )
-    # call_api_task = PythonOperator(
-    #     task_id="call_api_task", 
-    #     python_callable=call_api,
-    #     provide_context=True
-    # )
-    # transform_data_task = PythonOperator(
-    #     task_id="transform_data_task",
-    #     python_callable=transform_data,
-    #     provide_context=True
-    # )
+    load_data_task = PythonOperator(
+        task_id="load_data_task", 
+        python_callable=load_data,
+        provide_context=True
+    )
+    call_api_task = PythonOperator(
+        task_id="call_api_task", 
+        python_callable=call_api,
+        provide_context=True
+    )
+    transform_data_task = PythonOperator(
+        task_id="transform_data_task",
+        python_callable=transform_data,
+        provide_context=True
+    )
     write_data_task = PythonOperator(
         task_id="write_data_task",
         python_callable=write_data,
         provide_context=True
     )
 
-# load_data_task >> call_api_task >> transform_data_task >> write_data_task
-write_data_task
+load_data_task >> call_api_task >> transform_data_task >> write_data_task
