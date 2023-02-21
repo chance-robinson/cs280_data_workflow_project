@@ -107,6 +107,8 @@ def write_data():
         z = session.query(User)
         print(q)
         print(z)
+        print(q.all())
+        print(z.all())
         if (q.filter(user_id=val[myDict['data.id']])):
             record = q.filter(user_id=val[myDict['data.id']]).first()
             print(record)
