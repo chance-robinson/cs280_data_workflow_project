@@ -109,7 +109,7 @@ def write_data():
         print(z)
         print(q.all())
         print(z.all())
-        if (q.filter(user_id=val[myDict['data.id']])):
+        if (q.filter(user_id=val[myDict['data.id']])) and (q.all()):
             record = q.filter(user_id=val[myDict['data.id']]).first()
             print(record)
             print(val)
@@ -185,7 +185,7 @@ def write_data():
         user_timeseries_headers = ['data.id','data.public_metrics.followers_count','data.public_metrics.following_count','data.public_metrics.tweet_count', 'data.public_metrics.listed_count']
         for val in data:
             create_data_users(header, user_headers, val)
-            # create_data_users_timeseries(header, user_timeseries_headers, val)
+            create_data_users_timeseries(header, user_timeseries_headers, val)
 
     # with fs.open('gs://c-r-apache-airflow-cs280/data/tweets.csv', 'r') as csvfile:
     #     reader = csv.reader(csvfile)
@@ -199,8 +199,8 @@ def write_data():
 
 with DAG(
     dag_id="data_warehouse",
-    schedule_interval="*/2 * * * *", # schedule_interval="*/2 * * * *", "0 9 * * *",
-    start_date=pendulum.datetime(2023, 1, 1, tz="US/Pacific"), # start_date=pendulum.datetime(2023, 1, 26, tz="US/Pacific"),
+    schedule_interval="0 9 * * *",
+    start_date=pendulum.datetime(2023, 1, 26, tz="US/Pacific"),
     catchup=False,
 ) as dag:
     # load_data_task = PythonOperator(
