@@ -184,8 +184,8 @@ def write_data():
         user_headers = ['data.id','data.username','data.name','data.created_at']
         user_timeseries_headers = ['data.id','data.public_metrics.followers_count','data.public_metrics.following_count','data.public_metrics.tweet_count', 'data.public_metrics.listed_count']
         for val in data:
-            # create_data_users(header, user_headers, val)
-            create_data_users_timeseries(header, user_timeseries_headers, val)
+            create_data_users(header, user_headers, val)
+            # create_data_users_timeseries(header, user_timeseries_headers, val)
 
     # with fs.open('gs://c-r-apache-airflow-cs280/data/tweets.csv', 'r') as csvfile:
     #     reader = csv.reader(csvfile)
