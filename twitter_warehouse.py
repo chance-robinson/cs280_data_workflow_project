@@ -106,6 +106,7 @@ def write_data():
         q = session.query(User_Timeseries)
         z = session.query(User)
         print(q)
+        print(z)
         if (q.filter(user_id=val[myDict['data.id']])):
             record = q.filter(user_id=val[myDict['data.id']]).first()
             print(record)
