@@ -77,6 +77,7 @@ def write_data():
     def create_data_users(header, match_headers, val):
         session = Session()
         # update
+        myDict = header_index_vals(header, match_headers)
         q = session.query(User)
         if (q.filter(User.user_id==val[myDict['data.id']])):
             q = q.filter(User.user_id==val[myDict['data.id']])
@@ -86,7 +87,6 @@ def write_data():
             record.created_at = val[myDict['data.created_at']]
         # create
         else:
-            myDict = header_index_vals(header, match_headers)
             user = User(
                 user_id = val[myDict['data.id']],
                 username = val[myDict['data.username']],
@@ -99,6 +99,7 @@ def write_data():
 
     def create_data_users_timeseries(header, match_headers, val):
         session = Session()
+        myDict = header_index_vals(header, match_headers)
         q = session.query(User_Timeseries)
         if (q.filter(User_Timeseries.user_id==val[myDict['data.id']])):
             q = q.filter(User_Timeseries.user_id==val[myDict['data.id']])
@@ -110,7 +111,6 @@ def write_data():
             record.date = datetime.now()
         # create
         else:
-            myDict = header_index_vals(header, match_headers)
             user_timeseries = User_Timeseries(
                 user_id = val[myDict['data.id']],
                 followers_count = val[myDict['data.public_metrics.followers_count']],
@@ -125,6 +125,7 @@ def write_data():
 
     def create_data_tweets_timeseries(header, match_headers, val):
         session = Session()
+        myDict = header_index_vals(header, match_headers)
         q = session.query(Tweet_Timeseries)
         if (q.filter(Tweet_Timeseries.tweet_id==val[myDict['data.id']])):
             q = q.filter(Tweet_Timeseries.tweet_id==val[myDict['data.id']])
@@ -135,7 +136,6 @@ def write_data():
             record.date = datetime.now()
         # create
         else:
-            myDict = header_index_vals(header, match_headers)
             tweet_timeseries = Tweet_timeseries(
                 tweet_id = val[myDict['data.id']],
                 retweet_count = val[myDict['data.public_metrics.retweet_count']],
@@ -148,6 +148,7 @@ def write_data():
 
     def create_data_tweets(header, match_headers, val):
         session = Session()
+        myDict = header_index_vals(header, match_headers)
         q = session.query(Tweet)
         if (q.filter(Tweet.tweet_id==val[myDict['data.id']])):
             q = q.filter(Tweet.tweet_id==val[myDict['data.id']])
@@ -156,7 +157,6 @@ def write_data():
             record.created_at = val[myDict['data.created_at']]
         # create
         else:
-            myDict = header_index_vals(header, match_headers)
             tweet = Tweet(
                 tweet_id = val[myDict['data.id']],
                 user_id = val[myDict['data.author_id']],
