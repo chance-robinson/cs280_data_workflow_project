@@ -8,6 +8,8 @@ import requests
 from models.config import Session #You would import this from your config file
 from models.users import User
 from models.tweet import Tweet
+from models.user_timeseries import User_Timeseries
+from models.tweet_timeseries import Tweet_Timeseries
 import json
 import pandas as pd
 from google.cloud import storage
