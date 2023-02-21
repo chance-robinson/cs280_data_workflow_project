@@ -109,7 +109,7 @@ def write_data():
         print(z)
         print(q.all())
         print(z.all())
-        if (q.filter(user_id=val[myDict['data.id']])) and (q.all()):
+        if (q.filter(user_id=val[myDict['data.id']])) and not (q.all() == []):
             record = q.filter(user_id=val[myDict['data.id']]).first()
             print(record)
             print(val)
