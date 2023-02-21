@@ -78,16 +78,15 @@ def write_data():
 
     def create_data_users(header, match_headers, val):
         session = Session()
-        # update
         myDict = header_index_vals(header, match_headers)
         q = session.query(User)
-        if (q.filter(User.user_id==val[myDict['data.id']])):
+        
+        if (q.filter(User.user_id==val[myDict['data.id']])) and (q.all()) and not(q.filter(User_Timeseries.user_id==val[myDict['data.id']]).first() == None):
             q = q.filter(User.user_id==val[myDict['data.id']])
             record = q.one()
             record.username = val[myDict['data.username']]
             record.name = val[myDict['data.name']]
             record.created_at = val[myDict['data.created_at']]
-        # create
         else:
             user = User(
                 user_id = val[myDict['data.id']],
@@ -103,12 +102,9 @@ def write_data():
         session = Session()
         myDict = header_index_vals(header, match_headers)
         q = session.query(User_Timeseries)
-        print(q.all())
-        print(q.filter(User_Timeseries.user_id==val[myDict['data.id']]).first())
-        print(val[myDict['data.id']])
+        
         if (q.filter(User_Timeseries.user_id==val[myDict['data.id']])) and (q.all()) and not(q.filter(User_Timeseries.user_id==val[myDict['data.id']]).first() == None):
             q = q.filter(User_Timeseries.user_id==val[myDict['data.id']])
-            print(q)
             record = q.one()
             record.followers_count = val[myDict['data.public_metrics.followers_count']]
             record.following_count = val[myDict['data.public_metrics.following_count']]
@@ -133,7 +129,7 @@ def write_data():
         session = Session()
         myDict = header_index_vals(header, match_headers)
         q = session.query(Tweet_Timeseries)
-        if (q.filter(Tweet_Timeseries.tweet_id==val[myDict['data.id']])):
+        if (q.filter(Tweet_Timeseries.tweet_id==val[myDict['data.id']])) and (q.all()) and not(q.filter(Tweet_Timeseries.tweet_id==val[myDict['data.id']]).first() == None):
             q = q.filter(Tweet_Timeseries.tweet_id==val[myDict['data.id']])
             record = q.one()
             record.tweet_id = val[myDict['data.id']]
@@ -156,12 +152,12 @@ def write_data():
         session = Session()
         myDict = header_index_vals(header, match_headers)
         q = session.query(Tweet)
-        if (q.filter(Tweet.tweet_id==val[myDict['data.id']])):
+        
+        if (q.filter(Tweet.tweet_id==val[myDict['data.id']])) and (q.all()) and not(q.filter(Tweet.tweet_id==val[myDict['data.id']]).first() == None):        
             q = q.filter(Tweet.tweet_id==val[myDict['data.id']])
             record = q.one()
             record.text = val[myDict['data.text']]
             record.created_at = val[myDict['data.created_at']]
-        # create
         else:
             tweet = Tweet(
                 tweet_id = val[myDict['data.id']],
@@ -184,15 +180,15 @@ def write_data():
             create_data_users(header, user_headers, val)
             create_data_users_timeseries(header, user_timeseries_headers, val)
 
-    # with fs.open('gs://c-r-apache-airflow-cs280/data/tweets.csv', 'r') as csvfile:
-    #     reader = csv.reader(csvfile)
-    #     header = next(reader)
-    #     data = [row for row in reader]
-    #     tweet_headers = ['data.id','data.author_id','data.text','data.created_at']
-    #     tweet_timeseries_headers = ['data.id','data.public_metrics.retweet_count','data.public_metrics.like_count']
-    #     for val in data:
-    #         create_data_tweets(header, tweet_headers, val)
-    #         create_data_tweets_timeseries(header, tweet_timeseries_headers, val)
+    with fs.open('gs://c-r-apache-airflow-cs280/data/tweets.csv', 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        header = next(reader)
+        data = [row for row in reader]
+        tweet_headers = ['data.id','data.author_id','data.text','data.created_at']
+        tweet_timeseries_headers = ['data.id','data.public_metrics.retweet_count','data.public_metrics.like_count']
+        for val in data:
+            create_data_tweets(header, tweet_headers, val)
+            create_data_tweets_timeseries(header, tweet_timeseries_headers, val)
 
 with DAG(
     dag_id="data_warehouse",
