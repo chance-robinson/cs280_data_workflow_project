@@ -116,7 +116,7 @@ def write_data():
                 followers_count = val[myDict['data.public_metrics.followers_count']],
                 following_count = val[myDict['data.public_metrics.following_count']],
                 tweet_count = val[myDict['data.public_metrics.tweet_count']],
-                listed_count = val[myDict['data.public_metrics.listed_count'],
+                listed_count = val[myDict['data.public_metrics.listed_count']],
                 date = datetime.now()
             )
             session.add(user_timeseries)
