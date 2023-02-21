@@ -105,6 +105,7 @@ def write_data():
         q = session.query(User_Timeseries)
         if (q.filter(User_Timeseries.user_id==val[myDict['data.id']])):
             record = q.filter(User_Timeseries.user_id==val[myDict['data.id']]).first()
+            print(q)
             print(record)
             print(val)
             record.followers_count = val[myDict['data.public_metrics.followers_count']]
