@@ -104,8 +104,7 @@ def write_data():
         myDict = header_index_vals(header, match_headers)
         q = session.query(User_Timeseries)
         if (q.filter(User_Timeseries.user_id==val[myDict['data.id']])):
-            q = q.filter(User_Timeseries.user_id==val[myDict['data.id']])
-            record = q.one()
+            record = q.filter(User_Timeseries.user_id==val[myDict['data.id']]).first()
             record.followers_count = val[myDict['data.public_metrics.followers_count']]
             record.following_count = val[myDict['data.public_metrics.following_count']]
             record.tweet_count = val[myDict['data.public_metrics.tweet_count']]
@@ -138,7 +137,7 @@ def write_data():
             record.date = datetime.now()
         # create
         else:
-            tweet_timeseries = Tweet_timeseries(
+            tweet_timeseries = Tweet_Timeseries(
                 tweet_id = val[myDict['data.id']],
                 retweet_count = val[myDict['data.public_metrics.retweet_count']],
                 favorite_count = val[myDict['data.public_metrics.like_count']],
@@ -177,7 +176,7 @@ def write_data():
         user_headers = ['data.id','data.username','data.name','data.created_at']
         user_timeseries_headers = ['data.id','data.public_metrics.followers_count','data.public_metrics.following_count','data.public_metrics.tweet_count', 'data.public_metrics.listed_count']
         for val in data:
-            create_data_users(header, user_headers, val)
+            # create_data_users(header, user_headers, val)
             create_data_users_timeseries(header, user_timeseries_headers, val)
 
     with fs.open('gs://c-r-apache-airflow-cs280/data/tweets.csv', 'r') as csvfile:
@@ -187,8 +186,8 @@ def write_data():
         tweet_headers = ['data.id','data.author_id','data.text','data.created_at']
         tweet_timeseries_headers = ['data.id','data.public_metrics.retweet_count','data.public_metrics.like_count']
         for val in data:
-            create_data_tweets(header, tweet_headers, val)
-            create_data_tweets_timeseries(header, tweet_timeseries_headers, val)
+            # create_data_tweets(header, tweet_headers, val)
+            # create_data_tweets_timeseries(header, tweet_timeseries_headers, val)
 
 with DAG(
     dag_id="data_warehouse",
