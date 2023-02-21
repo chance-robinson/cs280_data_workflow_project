@@ -167,10 +167,8 @@ def write_data():
         session.commit()
         session.close()
     
-    print("here")
     fs = GCSFileSystem(project="Chance-Robinson-CS-280")
-    with fs.open('gs://c-r-apache-airflow-cs280/data/data_users.csv', 'r') as csvfile:
-        print("inside csv")
+    with fs.open('gs://c-r-apache-airflow-cs280/data/users.csv', 'r') as csvfile:
         reader = csv.reader(csvfile)
         header = next(reader)
         data = [row for row in reader]
@@ -180,7 +178,7 @@ def write_data():
             create_data_users(header, user_headers, val)
             create_data_users_timeseries(header, user_timeseries_headers, val)
 
-    with fs.open('gs://c-r-apache-airflow-cs280/data/data_tweets.csv', 'r') as csvfile:
+    with fs.open('gs://c-r-apache-airflow-cs280/data/tweets.csv', 'r') as csvfile:
         reader = csv.reader(csvfile)
         header = next(reader)
         data = [row for row in reader]
