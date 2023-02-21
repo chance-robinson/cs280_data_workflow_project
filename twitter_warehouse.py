@@ -188,6 +188,7 @@ def write_data():
         for val in data:
             # create_data_tweets(header, tweet_headers, val)
             # create_data_tweets_timeseries(header, tweet_timeseries_headers, val)
+            print("ok")
 
 with DAG(
     dag_id="data_warehouse",
