@@ -13,7 +13,7 @@ import pandas as pd
 from google.cloud import storage
 from gcsfs import GCSFileSystem
 import csv
-import Datetime
+from datetime import datetime
 
 
 def flatten_list_of_dicts(lst):
