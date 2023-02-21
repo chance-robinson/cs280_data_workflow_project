@@ -104,6 +104,7 @@ def write_data():
         myDict = header_index_vals(header, match_headers)
         print(session)
         q = session.query(User_Timeseries)
+        z = session.query(User)
         print(q)
         if (q.filter(user_id=val[myDict['data.id']])):
             record = q.filter(user_id=val[myDict['data.id']]).first()
@@ -199,21 +200,21 @@ with DAG(
     start_date=pendulum.datetime(2023, 1, 1, tz="US/Pacific"), # start_date=pendulum.datetime(2023, 1, 26, tz="US/Pacific"),
     catchup=False,
 ) as dag:
-    load_data_task = PythonOperator(
-        task_id="load_data_task", 
-        python_callable=load_data,
-        provide_context=True
-    )
-    call_api_task = PythonOperator(
-        task_id="call_api_task", 
-        python_callable=call_api,
-        provide_context=True
-    )
-    transform_data_task = PythonOperator(
-        task_id="transform_data_task",
-        python_callable=transform_data,
-        provide_context=True
-    )
+    # load_data_task = PythonOperator(
+    #     task_id="load_data_task", 
+    #     python_callable=load_data,
+    #     provide_context=True
+    # )
+    # call_api_task = PythonOperator(
+    #     task_id="call_api_task", 
+    #     python_callable=call_api,
+    #     provide_context=True
+    # )
+    # transform_data_task = PythonOperator(
+    #     task_id="transform_data_task",
+    #     python_callable=transform_data,
+    #     provide_context=True
+    # )
     write_data_task = PythonOperator(
         task_id="write_data_task",
         python_callable=write_data,
