@@ -166,9 +166,11 @@ def write_data():
             session.add(tweet)
         session.commit()
         session.close()
-        
+    
+    print("here")
     fs = GCSFileSystem(project="Chance-Robinson-CS-280")
     with fs.open('gs://c-r-apache-airflow-cs280/data/data_users.csv', 'r') as csvfile:
+        print("inside csv")
         reader = csv.reader(csvfile)
         header = next(reader)
         data = [row for row in reader]
@@ -215,4 +217,5 @@ with DAG(
         provide_context=True
     )
 
-load_data_task >> call_api_task >> transform_data_task >> write_data_task
+# load_data_task >> call_api_task >> transform_data_task >> write_data_task
+write_data_task
