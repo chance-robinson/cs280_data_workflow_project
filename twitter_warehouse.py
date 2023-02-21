@@ -13,6 +13,7 @@ import pandas as pd
 from google.cloud import storage
 from gcsfs import GCSFileSystem
 import csv
+import Datetime
 
 
 def flatten_list_of_dicts(lst):
@@ -64,7 +65,124 @@ def transform_data(ti: TaskInstance, **kwargs):
     bucket.blob("data/tweets.csv").upload_from_string(tweet_df.to_csv(index=False), "text/csv")
     
 def write_data():
-    return 0
+    def header_index_vals(header, match_headers):
+        values = []
+        for val in match_headers:
+            for idx,item in enumerate(header):
+                if val == item:
+                    values.append(idx)
+        myDict = { k:v for (k,v) in zip(match_headers, values)} 
+        return myDict
+
+    def create_data_users(header, match_headers, val):
+        session = Session()
+        # update
+        q = session.query(User)
+        if (q = q.filter(User.user_id==val[myDict['data.id']])):
+            record = q.one()
+            record.username = val[myDict['data.username']]
+            record.name = val[myDict['data.name']]
+            record.created_at = val[myDict['data.created_at']]
+        # create
+        else:
+            myDict = header_index_vals(header, match_headers)
+            user = User(
+                user_id = val[myDict['data.id']]
+                username = val[myDict['data.username']]
+                name = val[myDict['data.name']]
+                created_at = val[myDict['data.created_at']]
+            )
+            session.add(user)
+        session.commit()
+        session.close()
+
+    def create_data_users_timeseries(header, match_headers, val):
+        session = Session()
+        q = session.query(User_Timeseries)
+        if (q = q.filter(User_Timeseries.user_id==val[myDict['data.id']])):
+            record = q.one()
+            record.followers_count = val[myDict['data.public_metrics.followers_count']]
+            record.following_count = val[myDict['data.public_metrics.following_count']]
+            record.tweet_count = val[myDict['data.public_metrics.tweet_count']]
+            record.listed_count = val[myDict['data.public_metrics.listed_count']
+            record.date = datetime.now()
+        # create
+        else:
+            myDict = header_index_vals(header, match_headers)
+            user_timeseries = User_Timeseries(
+                user_id = val[myDict['data.id']]
+                followers_count = val[myDict['data.public_metrics.followers_count']]
+                following_count = val[myDict['data.public_metrics.following_count']]
+                tweet_count = val[myDict['data.public_metrics.tweet_count']]
+                listed_count = val[myDict['data.public_metrics.listed_count']
+                date = datetime.now()
+            )
+            session.add(user_timeseries)
+        session.commit()
+        session.close()
+
+    def create_data_tweets_timeseries(header, match_headers, val):
+        session = Session()
+        q = session.query(Tweet_Timeseries)
+        if (q = q.filter(Tweet_Timeseries.tweet_id==val[myDict['data.id']])):
+            record = q.one()
+            record.tweet_id = val[myDict['data.id']]
+            record.retweet_count = val[myDict['data.public_metrics.retweet_count']]
+            record.favorite_count = val[myDict['data.public_metrics.like_count']]
+            record.date = datetime.now()
+        # create
+        else:
+            myDict = header_index_vals(header, match_headers)
+            tweet_timeseries = Tweet_timeseries(
+                tweet_id = val[myDict['data.id']]
+                retweet_count = val[myDict['data.public_metrics.retweet_count']]
+                favorite_count = val[myDict['data.public_metrics.like_count']]
+                date = datetime.now()
+            )
+            session.add(tweet_timeseries)
+        session.commit()
+        session.close()
+
+    def create_data_tweets(header, match_headers, val):
+        session = Session()
+        q = session.query(Tweet)
+        if (q = q.filter(Tweet.tweet_id==val[myDict['data.id']])):
+            record = q.one()
+            record.text = val[myDict['data.text']]
+            record.created_at = val[myDict['data.created_at']]
+        # create
+        else:
+            myDict = header_index_vals(header, match_headers)
+            tweet = Tweet(
+                tweet_id = val[myDict['data.id']]
+                user_id = val[myDict['data.author_id']]
+                text = val[myDict['data.text']]
+                created_at = val[myDict['data.created_at']]
+            )
+            session.add(tweet)
+        session.commit()
+        session.close()
+        
+    fs = GCSFileSystem(project="Chance-Robinson-CS-280")
+    with fs.open('gs://c-r-apache-airflow-cs280/data/data_users.csv', 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        header = next(reader)
+        data = [row for row in reader]
+        user_headers = ['data.id','data.username','data.name','data.created_at']
+        user_timeseries_headers = ['data.id','data.public_metrics.followers_count','data.public_metrics.following_count','data.public_metrics.tweet_count', 'data.public_metrics.listed_count']
+        for val in data:
+            create_data_users(header, user_headers, val)
+            create_data_users_timeseries(header, user_timeseries_headers, val)
+
+    with fs.open('gs://c-r-apache-airflow-cs280/data/data_tweets.csv', 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        header = next(reader)
+        data = [row for row in reader]
+        tweet_headers = ['data.id','data.author_id','data.text','data.created_at']
+        tweet_timeseries_headers = ['data.id','data.public_metrics.retweet_count','data.public_metrics.like_count']
+        for val in data:
+            create_data_tweets(header, tweet_headers, val)
+            create_data_tweets_timeseries(header, tweet_timeseries_headers, val)
 
 with DAG(
     dag_id="data_warehouse",
