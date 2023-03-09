@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Date, Float, BigInteger
 
 Base = declarative_base()
 
@@ -11,4 +11,4 @@ class Countries(Base):
     iso2 = Column(String, not_null=True)
 
     def __repr__(self) -> str:
-        return f"Countries(id={self.id}, country={self.country}, slug={self.slug}, iso2={self.iso2})"
+        return f"Countries(id={self.id}, country={self.c}, slug={self.slug}, iso2={self.iso2})"
