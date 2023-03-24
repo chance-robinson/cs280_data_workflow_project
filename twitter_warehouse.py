@@ -101,50 +101,50 @@ def write_data():
     def create_data_users_timeseries(header, match_headers, val):
         session = Session()
         myDict = header_index_vals(header, match_headers)
-        q = session.query(User_Timeseries)
+        # q = session.query(User_Timeseries)
         
-        if (q.filter(User_Timeseries.user_id==val[myDict['data.id']])) and (q.all()) and not(q.filter(User_Timeseries.user_id==val[myDict['data.id']]).first() == None):
-            q = q.filter(User_Timeseries.user_id==val[myDict['data.id']])
-            record = q.one()
-            record.followers_count = val[myDict['data.public_metrics.followers_count']]
-            record.following_count = val[myDict['data.public_metrics.following_count']]
-            record.tweet_count = val[myDict['data.public_metrics.tweet_count']]
-            record.listed_count = val[myDict['data.public_metrics.listed_count']]
-            record.date = datetime.now()
-        # create
-        else:
-            user_timeseries = User_Timeseries(
-                user_id = val[myDict['data.id']],
-                followers_count = val[myDict['data.public_metrics.followers_count']],
-                following_count = val[myDict['data.public_metrics.following_count']],
-                tweet_count = val[myDict['data.public_metrics.tweet_count']],
-                listed_count = val[myDict['data.public_metrics.listed_count']],
-                date = datetime.now()
-            )
-            session.add(user_timeseries)
+        # if (q.filter(User_Timeseries.user_id==val[myDict['data.id']])) and (q.all()) and not(q.filter(User_Timeseries.user_id==val[myDict['data.id']]).first() == None):
+        #     q = q.filter(User_Timeseries.user_id==val[myDict['data.id']])
+        #     record = q.one()
+        #     record.followers_count = val[myDict['data.public_metrics.followers_count']]
+        #     record.following_count = val[myDict['data.public_metrics.following_count']]
+        #     record.tweet_count = val[myDict['data.public_metrics.tweet_count']]
+        #     record.listed_count = val[myDict['data.public_metrics.listed_count']]
+        #     record.date = datetime.now()
+        # # create
+        # else:
+        user_timeseries = User_Timeseries(
+            user_id = val[myDict['data.id']],
+            followers_count = val[myDict['data.public_metrics.followers_count']],
+            following_count = val[myDict['data.public_metrics.following_count']],
+            tweet_count = val[myDict['data.public_metrics.tweet_count']],
+            listed_count = val[myDict['data.public_metrics.listed_count']],
+            date = datetime.now()
+        )
+        session.add(user_timeseries)
         session.commit()
         session.close()
 
     def create_data_tweets_timeseries(header, match_headers, val):
         session = Session()
         myDict = header_index_vals(header, match_headers)
-        q = session.query(Tweet_Timeseries)
-        if (q.filter(Tweet_Timeseries.tweet_id==val[myDict['data.id']])) and (q.all()) and not(q.filter(Tweet_Timeseries.tweet_id==val[myDict['data.id']]).first() == None):
-            q = q.filter(Tweet_Timeseries.tweet_id==val[myDict['data.id']])
-            record = q.one()
-            record.tweet_id = val[myDict['data.id']]
-            record.retweet_count = val[myDict['data.public_metrics.retweet_count']]
-            record.favorite_count = val[myDict['data.public_metrics.like_count']]
-            record.date = datetime.now()
-        # create
-        else:
-            tweet_timeseries = Tweet_Timeseries(
-                tweet_id = val[myDict['data.id']],
-                retweet_count = val[myDict['data.public_metrics.retweet_count']],
-                favorite_count = val[myDict['data.public_metrics.like_count']],
-                date = datetime.now()
-            )
-            session.add(tweet_timeseries)
+        # q = session.query(Tweet_Timeseries)
+        # if (q.filter(Tweet_Timeseries.tweet_id==val[myDict['data.id']])) and (q.all()) and not(q.filter(Tweet_Timeseries.tweet_id==val[myDict['data.id']]).first() == None):
+        #     q = q.filter(Tweet_Timeseries.tweet_id==val[myDict['data.id']])
+        #     record = q.one()
+        #     record.tweet_id = val[myDict['data.id']]
+        #     record.retweet_count = val[myDict['data.public_metrics.retweet_count']]
+        #     record.favorite_count = val[myDict['data.public_metrics.like_count']]
+        #     record.date = datetime.now()
+        # # create
+        # else:
+        tweet_timeseries = Tweet_Timeseries(
+            tweet_id = val[myDict['data.id']],
+            retweet_count = val[myDict['data.public_metrics.retweet_count']],
+            favorite_count = val[myDict['data.public_metrics.like_count']],
+            date = datetime.now()
+        )
+        session.add(tweet_timeseries)
         session.commit()
         session.close()
 
